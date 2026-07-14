@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	niosdns "github.com/infobloxopen/infoblox-nios-go-client/dns"
+	coremodel "github.com/infobloxopen/terraform-provider-infoblox/internal/core/model/dns"
 	"github.com/infobloxopen/terraform-provider-infoblox/internal/dynamicallocation"
 )
 
@@ -39,4 +40,8 @@ func BuildRecordAFuncCall(ctx context.Context, data types.Object, diags *diag.Di
 	}
 
 	return m.FuncCall(ctx, "Ipv4addr", "network", diags)
+}
+
+func PostExpandRecordAUDDI(ctx context.Context, ext *coremodel.UDDIRecordAExt, diags *diag.Diagnostics) *coremodel.UDDIRecordAExt {
+	return ext
 }
