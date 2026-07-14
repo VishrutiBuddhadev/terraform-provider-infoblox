@@ -25,7 +25,6 @@ import (
 	dnshooks "github.com/infobloxopen/terraform-provider-infoblox/internal/hooks/dns"
 	immutable "github.com/infobloxopen/terraform-provider-infoblox/internal/planmodifiers/immutable"
 	importmod "github.com/infobloxopen/terraform-provider-infoblox/internal/planmodifiers/import"
-	"github.com/infobloxopen/terraform-provider-infoblox/internal/planmodifiers/suppressdiff"
 	customvalidator "github.com/infobloxopen/terraform-provider-infoblox/internal/validator"
 )
 
@@ -135,12 +134,12 @@ var RecordAResourceNiosSchemaAttributes = map[string]schema.Attribute{
 		MarkdownDescription: "Comment for the record; maximum 256 characters.",
 	},
 	"creator": schema.StringAttribute{
+		Default: stringdefault.StaticString("STATIC"),
 		Validators: []validator.String{
 			stringvalidator.OneOf("STATIC", "DYNAMIC", "SYSTEM"),
 		},
 		Optional: true,
 		Computed: true,
-		Default:  stringdefault.StaticString("STATIC"),
 		PlanModifiers: []planmodifier.String{
 			immutable.ImmutableIfValue("SYSTEM"),
 		},
@@ -204,9 +203,9 @@ var RecordAResourceNiosSchemaAttributes = map[string]schema.Attribute{
 	"ttl": schema.Int64Attribute{
 		Optional: true,
 		Computed: true,
-		PlanModifiers: []planmodifier.Int64{
-			suppressdiff.UseStateToSuppressDiffInt64(),
-		},
+		// PlanModifiers: []planmodifier.Int64{
+		// 	suppressdiff.UseStateToSuppressDiffInt64(),
+		// },
 		MarkdownDescription: "The Time To Live (TTL) value for record. A 32-bit unsigned integer that represents the duration, in seconds, for which the record is valid (cached). Zero indicates that the record should not be cached.",
 	},
 	"view": schema.StringAttribute{
@@ -236,9 +235,9 @@ var RecordAResourceUddiSchemaAttributes = map[string]schema.Attribute{
 		MarkdownDescription: "Synthetic field, used to determine _zone_ and/or _name_in_zone_ field for records.",
 	},
 	"comment": schema.StringAttribute{
+		Default:             stringdefault.StaticString(""),
 		Optional:            true,
 		Computed:            true,
-		Default:             stringdefault.StaticString(""),
 		MarkdownDescription: "The description for the DNS resource record. May contain 0 to 1024 characters. Can include UTF-8.",
 	},
 	"disabled": schema.BoolAttribute{

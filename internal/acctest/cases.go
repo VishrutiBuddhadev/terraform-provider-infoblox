@@ -184,15 +184,27 @@ func (rc *ResourceCase) materialize() {
 		return v
 	}
 
-	replace := func(v any) any {
-		s, ok := v.(string)
-		if !ok {
+	var replace func(v any) any
+	replace = func(v any) any {
+		switch val := v.(type) {
+		case string:
+			for _, ph := range placeholderPattern.FindAllString(val, -1) {
+				val = strings.ReplaceAll(val, ph, value(ph))
+			}
+			return val
+		case map[string]any:
+			for k, item := range val {
+				val[k] = replace(item)
+			}
+			return val
+		case []any:
+			for i, item := range val {
+				val[i] = replace(item)
+			}
+			return val
+		default:
 			return v
 		}
-		for _, ph := range placeholderPattern.FindAllString(s, -1) {
-			s = strings.ReplaceAll(s, ph, value(ph))
-		}
-		return s
 	}
 
 	replaceMap := func(m map[string]any) {
