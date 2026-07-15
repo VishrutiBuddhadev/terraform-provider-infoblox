@@ -184,27 +184,15 @@ func (rc *ResourceCase) materialize() {
 		return v
 	}
 
-	var replace func(v any) any
-	replace = func(v any) any {
-		switch val := v.(type) {
-		case string:
-			for _, ph := range placeholderPattern.FindAllString(val, -1) {
-				val = strings.ReplaceAll(val, ph, value(ph))
-			}
-			return val
-		case map[string]any:
-			for k, item := range val {
-				val[k] = replace(item)
-			}
-			return val
-		case []any:
-			for i, item := range val {
-				val[i] = replace(item)
-			}
-			return val
-		default:
+	replace := func(v any) any {
+		s, ok := v.(string)
+		if !ok {
 			return v
 		}
+		for _, ph := range placeholderPattern.FindAllString(s, -1) {
+			s = strings.ReplaceAll(s, ph, value(ph))
+		}
+		return s
 	}
 
 	// replaceDeep recurses into nested objects/lists (e.g. members, options,
