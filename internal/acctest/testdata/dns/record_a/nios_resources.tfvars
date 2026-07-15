@@ -268,7 +268,7 @@ case "func_call" {
     nios {
       name               = "{{random}}.example.com"
       view               = "default"
-      dynamic_allocation = { network = "10.0.0.0/24", network_view = "default" }
+      dynamic_allocation = { network = "11.0.0.0/24", network_view = "default" }
       comment            = "Original Function Call"
     }
   }
@@ -277,7 +277,7 @@ case "func_call" {
     nios {
       name               = "{{random}}.example.com"
       view               = "default"
-      dynamic_allocation = { network = "10.0.0.0/24", network_view = "default" }
+      dynamic_allocation = { network = "11.0.0.0/24", network_view = "default" }
       comment            = "Function Call with Update"
     }
   }

@@ -303,22 +303,92 @@ case "ttl" {
 }
 
 case "view" {
-  # view — generated from terraform-provider-uddi
-  backend     = "uddi"
-  skip        = true
-  skip_reason = "helper declares prerequisite resource 'bloxone_dns_view' which has no buildable infoblox equivalent (not in _PREREQ_TYPE_MAP)"
+  backend = "uddi"
+  step {
+    uddi {
+      rdata              = { address = "{{random_ip}}" }
+      absolute_name_spec = "10.in-addr.arpa."
+      view               = "dns/view/28b9c115-8d5f-416e-979f-e7e71d80a3a3"
+    }
+    check = {
+      "uddi.view" = "dns/view/28b9c115-8d5f-416e-979f-e7e71d80a3a3"
+    }
+  }
+
+  step {
+    uddi {
+      rdata              = { address = "{{random_ip}}" }
+      absolute_name_spec = "zone-xoeivh.com."
+      view               = "dns/view/ce528cc5-7482-4278-835f-801fb4f884fe"
+    }
+    check = {
+      "uddi.view" = "dns/view/ce528cc5-7482-4278-835f-801fb4f884fe"
+    }
+  }
+
 }
 
 case "zone" {
   # zone — generated from terraform-provider-uddi
-  backend     = "uddi"
-  skip        = true
-  skip_reason = "inline prerequisite resource 'infoblox_zone_auth' could not be rendered"
+  backend = "uddi"
+  step {
+    uddi {
+      rdata = { address = "{{random_ip}}" }
+      zone  = "dns/auth_zone/c75d3700-05b5-4ff8-a413-dfa0bcb5b020"
+    }
+    check = {
+      "uddi.zone" = "dns/auth_zone/c75d3700-05b5-4ff8-a413-dfa0bcb5b020"
+    }
+  }
+  step {
+    uddi {
+      rdata = { address = "{{random_ip}}" }
+      zone  = "dns/auth_zone/113e8a4d-440c-488f-aaf0-1acea9437ff9"
+      ttl   = 90
+    }
+    check = {
+      "uddi.zone" = "dns/auth_zone/113e8a4d-440c-488f-aaf0-1acea9437ff9"
+    }
+  }
 }
 
 case "options" {
-  # options — generated from terraform-provider-uddi
-  backend     = "uddi"
-  skip        = true
-  skip_reason = "a prerequisite helper resource could not be rendered"
+  backend = "uddi"
+
+  step {
+    uddi {
+      rdata   = { address = "{{random_ip}}" }
+      zone    = "dns/auth_zone/113e8a4d-440c-488f-aaf0-1acea9437ff9"
+      options = { create_ptr = true, check_rmz = true }
+    }
+    check = {
+      "uddi.options.create_ptr" = "true"
+      "uddi.options.check_rmz"  = "true"
+    }
+  }
+
+  step {
+    uddi {
+      rdata   = { address = "{{random_ip}}" }
+      zone    = "dns/auth_zone/113e8a4d-440c-488f-aaf0-1acea9437ff9"
+      options = { create_ptr = true, check_rmz = false }
+    }
+    check = {
+      "uddi.options.create_ptr" = "true"
+      "uddi.options.check_rmz"  = "false"
+    }
+  }
+
+  step {
+    uddi {
+      rdata   = { address = "{{random_ip}}" }
+      zone    = "dns/auth_zone/113e8a4d-440c-488f-aaf0-1acea9437ff9"
+      options = { create_ptr = false, check_rmz = false }
+    }
+    check = {
+      "uddi.options.create_ptr" = "false"
+      "uddi.options.check_rmz"  = "false"
+    }
+  }
+
 }

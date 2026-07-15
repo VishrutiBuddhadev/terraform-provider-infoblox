@@ -312,6 +312,7 @@ var RecordAResourceUddiSchemaAttributes = map[string]schema.Attribute{
 	},
 	"zone": schema.StringAttribute{
 		Optional: true,
+		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
@@ -425,7 +426,9 @@ func (m *RecordAModel) Flatten(ctx context.Context, resp *coremodel.RecordA, dia
 	}
 	uddiModel.Flatten(ctx, resp.UDDI, diags)
 	if resp.UDDI != nil {
+		plannedUDDI := m.UDDI
 		m.UDDI = flex.FlattenNestedObject(ctx, uddiModel, UDDIRecordAAttrTypes, diags)
+		m.UDDI = dnshooks.PostFlattenRecordAUDDI(ctx, plannedUDDI, m.UDDI, diags)
 	} else {
 		m.UDDI = types.ObjectNull(UDDIRecordAAttrTypes)
 	}
